@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>যাকাত ক্যালকুলেটর</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            padding-right: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-size: 1.1em;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        .input-container {
+            width: 48%;
+        }
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>যাকাত ক্যালকুলেটর</h1>
+    <div class="container">
+        <h3>আপনার সোনার পরিমাণ এবং দাম প্রবেশ করান</h3>
+        <div id="gold-inputs">
+            <!-- 18-Carat Gold Input (Vori) -->
+            <div class="row">
+                <div class="input-container">
+                    <label for="amount18">১৮ ক্যারেট সোনা (ভরি):</label>
+                    <input type="number" id="amount18" placeholder="ভরি পরিমাণ লিখুন" step="any" onchange="checkPriceInput('amount18', 'price18')">
+                </div>
+                <div class="input-container">
+                    <label for="price18">দাম (প্রতি গ্রাম BDT):</label>
+                    <input type="number" id="price18" value="10582" disabled>
+                </div>
+            </div>
+
+            <!-- 21-Carat Gold Input (Vori) -->
+            <div class="row">
+                <div class="input-container">
+                    <label for="amount21">২১ ক্যারেট সোনা (ভরি):</label>
+                    <input type="number" id="amount21" placeholder="ভরি পরিমাণ লিখুন" step="any" onchange="checkPriceInput('amount21', 'price21')">
+                </div>
+                <div class="input-container">
+                    <label for="price21">দাম (প্রতি গ্রাম BDT):</label>
+                    <input type="number" id="price21" value="12346" disabled>
+                </div>
+            </div>
+
+            <!-- 22-Carat Gold Input (Vori) -->
+            <div class="row">
+                <div class="input-container">
+                    <label for="amount22">২২ ক্যারেট সোনা (ভরি):</label>
+                    <input type="number" id="amount22" placeholder="ভরি পরিমাণ লিখুন" step="any" onchange="checkPriceInput('amount22', 'price22')">
+                </div>
+                <div class="input-container">
+                    <label for="price22">দাম (প্রতি গ্রাম BDT):</label>
+                    <input type="number" id="price22" value="12934" disabled>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="calculateZakat()">যাকাত হিসাব করুন</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const VORI_TO_GRAMS = 11.664;  // 1 Vori = 11.664 grams
+
+        // Conversion ratio to convert all carat to 24-carat equivalent
+        const CARAT_CONVERSION = {
+            18: 18 / 24,  // 18-carat gold is 18/24 pure
+            21: 21 / 24,  // 21-carat gold is 21/24 pure
+            22: 22 / 24   // 22-carat gold is 22/24 pure
+        };
+
+        function checkPriceInput(amountId, priceId) {
+            const amount = parseFloat(document.getElementById(amountId).value);
+            const priceInput = document.getElementById(priceId);
+            
+            // Enable the price input field only if amount is greater than 0
+            if (amount > 0) {
+                priceInput.disabled = false;
+            } else {
+                priceInput.disabled = true;
+                priceInput.value = '';  // Clear price if amount is 0
+            }
+        }
+
+        function calculateZakat() {
+            // Get the price and amount values for each carat (in Vori)
+            const price18 = parseFloat(document.getElementById('price18').value) || 0;
+            const amount18 = parseFloat(document.getElementById('amount18').value) || 0;
+
+            const price21 = parseFloat(document.getElementById('price21').value) || 0;
+            const amount21 = parseFloat(document.getElementById('amount21').value) || 0;
+
+            const price22 = parseFloat(document.getElementById('price22').value) || 0;
+            const amount22 = parseFloat(document.getElementById('amount22').value) || 0;
+
+            // Convert the amounts of each type of gold to 24-carat equivalent in grams
+            const equivalent24Carat18 = amount18 * CARAT_CONVERSION[18];
+            const equivalent24Carat21 = amount21 * CARAT_CONVERSION[21];
+            const equivalent24Carat22 = amount22 * CARAT_CONVERSION[22];
+
+            // Total weight in 24-carat equivalent grams
+            const totalWeightInGrams = (
+                equivalent24Carat18 * VORI_TO_GRAMS +
+                equivalent24Carat21 * VORI_TO_GRAMS +
+                equivalent24Carat22 * VORI_TO_GRAMS
+            );
+
+            // Nisab threshold for zakat calculation (87.48 grams)
+            const nisab = 87.48;
+
+            // Zakat calculation only if total weight is greater than or equal to the nisab
+            let zakatGold = 0;
+            if (totalWeightInGrams >= nisab) {
+                const totalValue = (
+                    (price18 * amount18 * VORI_TO_GRAMS) +
+                    (price21 * amount21 * VORI_TO_GRAMS) +
+                    (price22 * amount22 * VORI_TO_GRAMS)
+                );
+                zakatGold = totalValue * 0.025;  // 2.5% zakat on total value of gold
+            }
+
+            // Display the result
+            document.getElementById('result').innerHTML = `
+                মোট সোনা (গ্রামে): ${totalWeightInGrams.toFixed(2)} গ্রাম<br>
+                সোনার যাকাত: BDT ${zakatGold.toFixed(2)}<br>
+                ${totalWeightInGrams >= nisab ? '<strong>যাকাত প্রদান করতে হবে।</strong>' : '<strong>যাকাত প্রযোজ্য নয়।</strong>'}
+            `;
+        }
+    </script>
+
+</body>
+</html>
